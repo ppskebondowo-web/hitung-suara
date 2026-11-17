@@ -42,6 +42,43 @@
       color: #555;
       font-weight: normal;
     }
+    .login-box {
+      background-color: #f8f9fa;
+      border: 1px solid #dadce0;
+      padding: 25px 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .login-box input {
+      width: 240px;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .btn-masuk {
+      padding: 10px 25px;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-masuk:hover {
+      background-color: #1557b0;
+    }
+    .login-error {
+      color: #d93025;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
+      font-weight: bold;
+    }
     h3 {
       background-color: #e8f0fe;
       color: #1967d2;
@@ -81,11 +118,11 @@
       font-size: 14px;
     }
     .form-group input[type="text"] {
-      width: 220px;
+      width: 200px;
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
-      text-align: left;
+      text-align: center;
       font-size: 14px;
     }
     .form-group input[readonly] {
@@ -121,6 +158,18 @@
     }
     .btn-ok:hover {
       background-color: #1557b0;
+    }
+    .btn-ganti {
+      background: none;
+      border: none;
+      color: #1a73e8;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      text-align: center;
     }
     .modal-overlay {
       display: none;
@@ -173,12 +222,23 @@
     <p>Pemilihan Kepala Desa Kebondowo</p>
     <span>14 Desember 2026</span>
   </div>
+
+  <!-- Bagian Login Password TPS -->
+  <div id="loginSection" class="login-box">
+    <h4 style="margin-top:0; font-size:16px;">Akses Petugas TPS</h4>
+    <p style="font-size:13px; color:#555;">Silakan masukkan password TPS Anda untuk membuka formulir.</p>
+    <input type="password" id="inputPassword" placeholder="Masukkan Password TPS" onkeypress="if(event.key === 'Enter') cekPassword()">
+    <br>
+    <button type="button" class="btn-masuk" onclick="cekPassword()">Buka Formulir</button>
+    <div id="loginError" class="login-error">Password salah! Silakan periksa kembali password TPS Anda.</div>
+  </div>
   
-  <form id="suaraForm" onsubmit="return false;">
+  <!-- Bagian Formulir Utama (Tersembunyi sebelum password benar) -->
+  <form id="suaraForm" onsubmit="return false;" style="display: none;">
     <h3>Identitas TPS</h3>
     <div class="form-group">
       <label><b>Nama / Nomor TPS</b></label>
-      <input type="text" id="nama_tps" placeholder="Contoh: TPS 001" required>
+      <input type="text" id="nama_tps" readonly>
     </div>
 
     <h3>I. Data Pemilih dan Penggunaan Hak Pilih</h3>
@@ -273,12 +333,14 @@
     </div>
 
     <button type="button" class="btn-ok" onclick="validasiForm()">OK</button>
+    <button type="button" class="btn-ganti" onclick="keluarTps()">Keluar / Ganti Password TPS</button>
   </form>
 </div>
 
 <div id="modalKonfirmasi" class="modal-overlay">
   <div class="modal-box">
     <h3>Yakin mengirim data ini?</h3>
+    <p id="konfirmasiTpsText" style="font-size:14px; color:#555;"></p>
     <div class="modal-buttons">
       <button type="button" class="btn-ya" id="btnYa" onclick="kirimData()">Ya</button>
       <button type="button" class="btn-tidak" onclick="tutupModal('modalKonfirmasi')">Tidak</button>
@@ -290,12 +352,52 @@
   <div class="modal-box">
     <h3 style="color: #1e8e3e;">Pengiriman Berhasil</h3>
     <p>Data telah tersimpan ke Google Sheet.</p>
-    <button type="button" class="btn-ok" onclick="resetForm()">Input Data Baru</button>
+    <button type="button" class="btn-ok" onclick="resetForm()">Selesai</button>
   </div>
 </div>
 <script>
-  // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-  const SCRIPT_URL = "PASTE_URL_WEB_APP_APPS_SCRIPT_DISINI";
+  // 1. GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC-txgLInQbnCk2ZlnxlF9HxhOjozNmVDTkCsvzNaD/dev";
+
+  // 2. ATUR DAFTAR PASSWORD DAN NAMA TPS DI SINI
+  // Format: "Password": "Nama TPS"
+  const DAFTAR_PASSWORD = {
+    "kbd001": "TPS 001",
+    "kbd002": "TPS 002",
+    "kbd003": "TPS 003",
+    "kbd004": "TPS 004",
+    "kbd005": "TPS 005",
+    "kbd006": "TPS 006",
+    "kbd007": "TPS 007",
+    "kbd008": "TPS 008",
+    "kbd009": "TPS 009",
+    "kbd010": "TPS 010",
+    "kbd011": "TPS 011"
+  };
+
+  function cekPassword() {
+    const pwdInput = document.getElementById('inputPassword').value.trim();
+    const loginError = document.getElementById('loginError');
+
+    if (DAFTAR_PASSWORD.hasOwnProperty(pwdInput)) {
+      loginError.style.display = "none";
+      document.getElementById('nama_tps').value = DAFTAR_PASSWORD[pwdInput];
+      document.getElementById('loginSection').style.display = "none";
+      document.getElementById('suaraForm').style.display = "block";
+    } else {
+      loginError.style.display = "block";
+    }
+  }
+
+  function keluarTps() {
+    document.getElementById('suaraForm').reset();
+    document.getElementById('dpt_jml').value = 0;
+    document.getElementById('php_jml').value = 0;
+    document.getElementById('inputPassword').value = "";
+    document.getElementById('errorBox').style.display = "none";
+    document.getElementById('suaraForm').style.display = "none";
+    document.getElementById('loginSection').style.display = "block";
+  }
 
   function getVal(id) {
     const val = document.getElementById(id).value;
@@ -318,11 +420,6 @@
     const errorList = document.getElementById('errorList');
     errorList.innerHTML = "";
     let errors = [];
-
-    const namaTps = document.getElementById('nama_tps').value.trim();
-    if (namaTps === "") {
-      errors.push("Nama / Nomor TPS wajib diisi.");
-    }
 
     const inputs = form.querySelectorAll('input[type="number"][required]');
     for (let inp of inputs) {
@@ -387,6 +484,8 @@
       errorBox.scrollIntoView({ behavior: 'smooth' });
     } else {
       errorBox.style.display = "none";
+      const namaTps = document.getElementById('nama_tps').value;
+      document.getElementById('konfirmasiTpsText').textContent = "Data untuk: " + namaTps;
       document.getElementById('modalKonfirmasi').style.display = "flex";
     }
   }
@@ -396,7 +495,7 @@
   }
 
   function kirimData() {
-    if (SCRIPT_URL === "https://script.google.com/macros/s/AKfycbzC-txgLInQbnCk2ZlnxlF9HxhOjozNmVDTkCsvzNaD/dev"") {
+    if (SCRIPT_URL === "PASTE_URL_WEB_APP_APPS_SCRIPT_DISINI" || SCRIPT_URL === "") {
       alert("URL Apps Script belum dipasang di dalam kode HTML!");
       return;
     }
@@ -449,10 +548,8 @@
   }
 
   function resetForm() {
-    document.getElementById('suaraForm').reset();
-    document.getElementById('dpt_jml').value = 0;
-    document.getElementById('php_jml').value = 0;
     tutupModal('modalSukses');
+    keluarTps();
   }
 </script>
 
