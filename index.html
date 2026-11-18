@@ -366,10 +366,10 @@
   </div>
 </div>
 <script>
-  // 1. GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-  const SCRIPT_URL = "PASTE_URL_WEB_APP_APPS_SCRIPT_DISINI";
+  // URL WEB APP GOOGLE APPS SCRIPT ANDA SUDAH TERPASANG DI SINI
+  const SCRIPT_URL = "https://google.com";
 
-  // 2. DAFTAR PASSWORD DAN NAMA TPS
+  // DAFTAR PASSWORD DAN NAMA TPS
   const DAFTAR_PASSWORD = {
     "kbd001": "TPS 001",
     "kbd002": "TPS 002",
@@ -383,7 +383,6 @@
     "kbd010": "TPS 010"
   };
 
-  // Fungsi membatasi maksimal 3 digit angka
   function batasiDigit(el) {
     if (el.value.length > 3) {
       el.value = el.value.slice(0, 3);
@@ -510,7 +509,7 @@
   }
 
   function kirimData() {
-    if (SCRIPT_URL === "https://script.google.com/macros/s/AKfycbzf0Iq1S7_fpQhqaKWOtLqLrB0_uRLaW54631wtkEf3yZFwiRGpbNVniFbqYUt3Is1t3A/exec"") {
+    if (SCRIPT_URL === "") {
       alert("URL Apps Script belum dipasang di dalam kode HTML!");
       return;
     }
@@ -567,6 +566,7 @@
     keluarTps();
   }
 </script>
+
 
 </body>
 </html>
