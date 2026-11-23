@@ -2,228 +2,296 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Hadir Pemilih - Pilkades Kebondowo 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tungsura Pilkades Kebondowo 2026</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #f4f6f8; padding: 20px; max-width: 500px; margin: auto; }
-    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    h2 { margin-top: 0; font-size: 1.25rem; color: #1a202c; text-align: center; }
-    p.sub { text-align: center; color: #4a5568; font-size: 0.9rem; margin-bottom: 20px; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; color: #2d3748; }
-    select, input { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
-    input[readonly] { background-color: #edf2f7; color: #4a5568; font-weight: 500; }
-    button { width: 100%; padding: 12px; background: #2b6cb0; color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    button:disabled { background: #a0aec0; cursor: not-allowed; }
-    #status { margin-top: 15px; padding: 10px; border-radius: 6px; text-align: center; font-size: 0.9rem; display: none; }
-    .success { background: #c6f6d5; color: #22543d; }
-    .error { background: #fed7d7; color: #742a2a; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: radial-gradient(circle at top right, #1e3a8a, #020617 68%);
+      color: #f8fafc;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 14px;
+    }
+    .container { width: 100%; max-width: 460px; margin: auto; display: flex; flex-direction: column; gap: 14px; }
+    .header { text-align: center; }
+    .pill {
+      display: inline-block; padding: 5px 14px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; border-radius: 99px; background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd; border: 1px solid rgba(96, 165, 250, 0.35); margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 23px; font-weight: 800; letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #ffffff, #bfdbfe, #38bdf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { font-size: 12px; color: #94a3b8; margin-top: 3px; }
+    .clock { font-size: 11px; color: #38bdf8; margin-top: 6px; }
+    .glass {
+      background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(96, 165, 250, 0.25);
+      border-radius: 20px; padding: 20px 16px; backdrop-filter: blur(14px);
+    }
+    .lbl-center {
+      display: block; text-align: center; font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.2px; color: #93c5fd; margin-bottom: 14px;
+    }
+    .pass-wrap { position: relative; width: 100%; margin-bottom: 14px; }
+    .pass-input {
+      width: 100%; padding: 15px 46px; border-radius: 14px; background: #0f172a;
+      border: 1px solid #334155; color: #ffffff; font-size: 16px; text-align: center; outline: none;
+    }
+    .pass-input:focus { border-color: #38bdf8; }
+    .btn-eye {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: #94a3b8; cursor: pointer; padding: 6px;
+    }
+    .btn-login {
+      width: 100%; padding: 15px; border-radius: 14px; border: none;
+      background: linear-gradient(90deg, #2563eb, #06b6d4); color: #ffffff;
+      font-size: 14px; font-weight: 800; letter-spacing: 0.8px; cursor: pointer;
+    }
+    .err-box {
+      display: none; margin-top: 12px; padding: 10px; border-radius: 12px;
+      background: rgba(127, 29, 29, 0.85); border: 1px solid #f43f5e;
+      color: #fecdd3; font-size: 12px; font-weight: 600; text-align: center;
+    }
+    .hidden { display: none !important; }
+    /* MONITORING ADMIN */
+    .admin-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .admin-title { font-size: 13px; font-weight: 800; color: #fde047; text-transform: uppercase; }
+    .admin-sub { font-size: 11px; color: #cbd5e1; margin-top: 2px; }
+    .btn-sm {
+      padding: 7px 11px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer;
+      background: #1e293b; border: 1px solid #334155; color: #38bdf8;
+    }
+    .btn-sm.exit { color: #fda4af; }
+    .calon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .calon-card {
+      background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 14px; padding: 10px 8px; text-align: center;
+    }
+    .c-name { font-size: 11px; font-weight: 800; color: #93c5fd; text-transform: uppercase; }
+    .c-votes { font-size: 18px; font-weight: 800; color: #ffffff; margin: 4px 0; }
+    .c-pct { font-size: 11px; font-weight: 700; color: #34d399; }
+    .tps-status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; max-height: 40dvh; overflow-y: auto; }
+    .tps-item {
+      background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 9px 10px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 11px;
+    }
+    .tps-item.done { border-color: rgba(16, 185, 129, 0.4); }
+    .st-badge { padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 700; }
+    .st-ok { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .st-wait { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+    .footer { text-align: center; font-size: 11px; color: #64748b; padding-top: 10px; }
   </style>
 </head>
 <body>
-
-<div class="card">
-  <h2>DAFTAR HADIR PEMILIH</h2>
-  <p class="sub">Pilkades Kebondowo Tahun 2026<br>Senin, 14 Desember 2026</p>
-
-  <form id="absenForm">
-    <div class="form-group">
-      <label for="tps">Pilih TPS</label>
-      <select id="tps" required>
-        <option value="">-- Pilih TPS --</option>
-        <option value="TPS 001">TPS 001</option>
-        <option value="TPS 002">TPS 002</option>
-        <option value="TPS 003">TPS 003</option>
-        <option value="TPS 004">TPS 004</option>
-        <option value="TPS 005">TPS 005</option>
-        <option value="TPS 006">TPS 006</option>
-        <option value="TPS 007">TPS 007</option>
-        <option value="TPS 008">TPS 008</option>
-        <option value="TPS 009">TPS 009</option>
-        <option value="TPS 010">TPS 010</option>
-        <option value="TPS 011">TPS 011</option>
-      </select>
+  <div></div>
+  <div class="container">
+    <div class="header">
+      <div class="pill">Tungsura • Hitung Suara TPS</div>
+      <h1>PILKADES KEBONDOWO</h1>
+      <div class="subtitle">Kecamatan Banyubiru • Kabupaten Semarang</div>
+      <div id="live-clock" class="clock">Memuat waktu...</div>
     </div>
 
-    <div class="form-group">
-      <label for="nomor_urut">Nomor Urut Kedatangan (Otomatis)</label>
-      <input type="text" id="nomor_urut" value="Otomatis tercatat saat simpan" readonly>
+    <div id="login-card" class="glass">
+      <label class="lbl-center" for="input-password">Akses Petugas KPPS / Panitia</label>
+      <div class="pass-wrap">
+        <input type="password" id="input-password" class="pass-input" placeholder="Masukkan Password TPS">
+        <button type="button" onclick="togglePassword()" class="btn-eye">👁</button>
+      </div>
+      <button onclick="handleLogin()" id="btn-login" class="btn-login">MASUK KE INPUT SUARA</button>
+      <div id="login-error" class="err-box"></div>
     </div>
 
-    <div class="form-group">
-      <label for="nomor_dpt">Nomor DPT</label>
-      <input type="number" id="nomor_dpt" placeholder="Ketik nomor urut DPT..." disabled required>
+    <div id="admin-card" class="glass hidden">
+      <div class="admin-head">
+        <div>
+          <div class="admin-title">Rekapitulasi Hasil Suara</div>
+          <div class="admin-sub" id="admin-summary">Memuat hasil TPS...</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button onclick="loadAdminResults()" id="btn-ref" class="btn-sm">↻</button>
+          <button onclick="logoutAdmin()" class="btn-sm exit">Keluar</button>
+        </div>
+      </div>
+
+      <div class="calon-grid">
+        <div class="calon-card">
+          <div class="c-name">Calon 1</div>
+          <div class="c-votes" id="tot-c1">0</div>
+          <div class="c-pct" id="pct-c1">0.0%</div>
+        </div>
+        <div class="calon-card">
+          <div class="c-name">Calon 2</div>
+          <div class="c-votes" id="tot-c2">0</div>
+          <div class="c-pct" id="pct-c2">0.0%</div>
+        </div>
+        <div class="calon-card">
+          <div class="c-name">Calon 3</div>
+          <div class="c-votes" id="tot-c3">0</div>
+          <div class="c-pct" id="pct-c3">0.0%</div>
+        </div>
+      </div>
+
+      <div id="tps-status-grid" class="tps-status-grid"></div>
     </div>
+  </div>
 
-    <div class="form-group">
-      <label for="nama">Nama Pemilih</label>
-      <input type="text" id="nama" readonly placeholder="Terisi otomatis...">
-    </div>
+  <footer class="footer">&copy; Panitia Pemilihan Kepala Desa Kebondowo 2026</footer>
+  <script>
+    const GITHUB_BASE = "./";
+    const TUNGSURA_SHEET_ID = "1cbk_RUXMYU8Y7gL819CiVAEWeUZmBelL-2vNYS6cx_s";
 
-    <div class="form-group">
-      <label for="jenis_kelamin">Jenis Kelamin</label>
-      <input type="text" id="jenis_kelamin" readonly placeholder="Terisi otomatis...">
-    </div>
+    function togglePassword() {
+      const inp = document.getElementById('input-password');
+      inp.type = inp.type === "password" ? "text" : "password";
+    }
 
-    <div class="form-group">
-      <label for="keterangan">Keterangan (Waktu Kehadiran)</label>
-      <input type="text" id="keterangan" readonly placeholder="Terisi timestamp saat disimpan...">
-    </div>
+    function showError(msg) {
+      const el = document.getElementById('login-error');
+      el.innerText = msg;
+      el.style.display = "block";
+    }
 
-    <button type="submit" id="btnSubmit" disabled>Simpan Kehadiran</button>
-  </form>
+    function activateAdmin() {
+      sessionStorage.setItem("tungsura_admin", "true");
+      document.getElementById('login-card').classList.add('hidden');
+      document.getElementById('admin-card').classList.remove('hidden');
+      loadAdminResults();
+    }
 
-  <div id="status"></div>
-</div>
+    function logoutAdmin() {
+      sessionStorage.removeItem("tungsura_admin");
+      document.getElementById('input-password').value = "";
+      document.getElementById('admin-card').classList.add('hidden');
+      document.getElementById('login-card').classList.remove('hidden');
+    }
 
-<script>
-  const GITHUB_BASE_URL = "./";
-  const GOOGLE_SCRIPT_URL = "https://google.com";
+    async function handleLogin() {
+      const pass = document.getElementById('input-password').value.trim();
+      const btn = document.getElementById('btn-login');
+      document.getElementById('login-error').style.display = "none";
 
-  let dataPemilih = [];
+      if (!pass) return showError("Masukkan password terlebih dahulu.");
+      if (pass === "AdminPusat") return activateAdmin();
 
-  const tpsSelect = document.getElementById('tps');
-  const nomorDptInput = document.getElementById('nomor_dpt');
-  const namaInput = document.getElementById('nama');
-  const jkInput = document.getElementById('jenis_kelamin');
-  const ketInput = document.getElementById('keterangan');
-  const urutInput = document.getElementById('nomor_urut');
-  const btnSubmit = document.getElementById('btnSubmit');
-  const statusDiv = document.getElementById('status');
+      btn.disabled = true;
+      btn.innerText = "MEMERIKSA AKSES...";
 
-  // 1. Ambil dan baca CSV langsung
-  tpsSelect.addEventListener('change', async function() {
-    const tps = this.value;
-    resetForm();
-    if (!tps) return;
+      try {
+        const res = await fetch(GITHUB_BASE + "Password.csv?t=" + Date.now());
+        if (!res.ok) throw new Error("Gagal membaca Password.csv");
+        const lines = (await res.text()).split(/\r?\n/);
 
-    showStatus("Memuat data " + tps + "...", "success");
-    const fileUrl = GITHUB_BASE_URL + encodeURIComponent(tps + ".csv");
-
-    try {
-      const response = await fetch(fileUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} - File "${tps}.csv" tidak ditemukan.`);
-      }
-      const csvText = await response.text();
-      
-      const baris = csvText.split(/\r?\n/);
-      dataPemilih = [];
-
-      for (let i = 1; i < baris.length; i++) {
-        const kolom = baris.at(i).split(';');
-        if (kolom.length >= 3) {
-          const no = kolom.at(0).trim();
-          const nama = kolom.at(1).trim();
-          const lp = kolom.at(2).trim();
-          
-          if (no && !isNaN(no)) {
-            dataPemilih.push({ No: no, Nama: nama, LP: lp });
+        let foundTps = null;
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines.at(i).split(';');
+          if (cols.length >= 2 && cols.at(0).trim() === pass) {
+            foundTps = cols.at(1).trim();
+            break;
           }
         }
+
+        if (!foundTps) {
+          btn.disabled = false;
+          btn.innerText = "MASUK KE INPUT SUARA";
+          return showError("Password salah atau tidak terdaftar.");
+        }
+
+        sessionStorage.removeItem("tungsura_admin");
+        sessionStorage.setItem("tungsura_tps", foundTps);
+        window.location.href = "hitung.html";
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerText = "MASUK KE INPUT SUARA";
+        showError("Kesalahan: " + e.message);
       }
+    }
 
-      if (dataPemilih.length === 0) {
-        showStatus("File CSV terbaca, tetapi 0 data pemilih ditemukan.", "error");
-        return;
+    async function loadAdminResults() {
+      const btn = document.getElementById('btn-ref');
+      btn.innerText = "...";
+      try {
+        const domain = "https://google.com";
+        const query = encodeURIComponent("SELECT B, M, N, P, Q, R, S OFFSET 0");
+        const url = domain + TUNGSURA_SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=hitung&tq=" + query + "&t=" + Date.now();
+        
+        const res = await fetch(url);
+        const text = await res.text();
+        const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+
+        let sumC1 = 0, sumC2 = 0, sumC3 = 0, sumSah = 0, tpsMasuk = 0;
+        const mapTps = {};
+
+        for (let i = 1; i < lines.length; i++) {
+          const c = lines.at(i).split(',').map(x => x.replace(/^"|"$/g, '').trim());
+          const namaTps = c.at(0);
+          if (namaTps && namaTps.startsWith("TPS")) {
+            const sah = parseInt(c.at(1), 10) || 0;
+            const c1 = parseInt(c.at(3), 10) || 0;
+            const c2 = parseInt(c.at(4), 10) || 0;
+            const c3 = parseInt(c.at(5), 10) || 0;
+            const waktu = c.at(6) || "";
+
+            if (waktu !== "") {
+              tpsMasuk++;
+              sumC1 += c1; sumC2 += c2; sumC3 += c3; sumSah += sah;
+            }
+            mapTps[namaTps] = { c1, c2, c3, sah, waktu };
+          }
+        }
+
+        document.getElementById('tot-c1').innerText = sumC1.toLocaleString('id-ID');
+        document.getElementById('tot-c2').innerText = sumC2.toLocaleString('id-ID');
+        document.getElementById('tot-c3').innerText = sumC3.toLocaleString('id-ID');
+
+        document.getElementById('pct-c1').innerText = sumSah > 0 ? ((sumC1 / sumSah) * 100).toFixed(1) + "%" : "0.0%";
+        document.getElementById('pct-c2').innerText = sumSah > 0 ? ((sumC2 / sumSah) * 100).toFixed(1) + "%" : "0.0%";
+        document.getElementById('pct-c3').innerText = sumSah > 0 ? ((sumC3 / sumSah) * 100).toFixed(1) + "%" : "0.0%";
+
+        document.getElementById('admin-summary').innerText = `TPS Masuk: ${tpsMasuk}/11 • Total Sah: ${sumSah}`;
+
+        let gridHtml = "";
+        for (let j = 1; j <= 11; j++) {
+          const tName = "TPS " + String(j).padStart(3, '0');
+          const d = mapTps[tName];
+          const isDone = d && d.waktu !== "";
+          gridHtml += `
+            <div class="tps-item ${isDone ? 'done' : ''}">
+              <div>
+                <div style="font-weight:800; color:#e2e8f0;">${tName}</div>
+                <div style="font-size:10px; color:#94a3b8; margin-top:2px;">${isDone ? `Sah: ${d.sah} (${d.c1}/${d.c2}/${d.c3})` : 'Belum mengirim'}</div>
+              </div>
+              <span class="st-badge ${isDone ? 'st-ok' : 'st-wait'}">${isDone ? 'Masuk' : 'Proses'}</span>
+            </div>
+          `;
+        }
+        document.getElementById('tps-status-grid').innerHTML = gridHtml;
+      } catch (e) {
+        document.getElementById('admin-summary').innerText = "Gagal memuat rekap.";
+      } finally {
+        btn.innerText = "↻";
       }
-
-      nomorDptInput.disabled = false;
-      nomorDptInput.focus();
-      showStatus("Data " + tps + " siap (" + dataPemilih.length + " pemilih).", "success");
-
-    } catch (err) {
-      showStatus("Gagal memuat: " + err.message, "error");
     }
-  });
 
-  // 2. Cari Nama & Jenis Kelamin otomatis berdasarkan Nomor DPT
-  nomorDptInput.addEventListener('input', function() {
-    const dicari = this.value.trim();
-    const pemilih = dataPemilih.find(row => row.No === dicari);
-
-    if (pemilih) {
-      namaInput.value = pemilih.Nama;
-      jkInput.value = pemilih.LP;
-      ketInput.value = new Date().toLocaleTimeString('id-ID') + " WIB";
-      btnSubmit.disabled = false;
-    } else {
-      namaInput.value = "";
-      jkInput.value = "";
-      ketInput.value = "";
-      btnSubmit.disabled = true;
+    function updateClock() {
+      const now = new Date();
+      const tgl = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+      const jam = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/\./g, ':');
+      document.getElementById('live-clock').innerText = `${tgl} • ${jam} WIB`;
     }
-  });
+    setInterval(updateClock, 1000);
+    updateClock();
 
-  // 3. Kirim data via JSONP (Bebas blokir CORS 100%)
-  document.getElementById('absenForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Menyimpan...";
-
-    const namaTersimpan = namaInput.value;
-    const callbackName = "cb_" + Date.now();
-
-    const params = new URLSearchParams({
-      tps: tpsSelect.value,
-      nomor_dpt: nomorDptInput.value,
-      nama: namaTersimpan,
-      jenis_kelamin: jkInput.value,
-      callback: callbackName
+    document.getElementById('input-password').addEventListener('keypress', e => {
+      if (e.key === 'Enter') handleLogin();
     });
-
-    const script = document.createElement('script');
-    script.src = GOOGLE_SCRIPT_URL + "?" + params.toString();
-
-    window[callbackName] = function(data) {
-      delete window[callbackName];
-      script.remove();
-      btnSubmit.textContent = "Simpan Kehadiran";
-
-      if (data.status === "success") {
-        urutInput.value = data.nomor_urut;
-        ketInput.value = data.timestamp;
-        showStatus("Tersimpan di Spreadsheet! Urutan ke-" + data.nomor_urut + " (" + namaTersimpan + ")", "success");
-
-        nomorDptInput.value = "";
-        namaInput.value = "";
-        jkInput.value = "";
-        nomorDptInput.focus();
-      } else {
-        showStatus("Gagal dari server: " + data.message, "error");
-        btnSubmit.disabled = false;
-      }
-    };
-
-    script.onerror = function() {
-      delete window[callbackName];
-      script.remove();
-      btnSubmit.textContent = "Simpan Kehadiran";
-      btnSubmit.disabled = false;
-      showStatus("Gagal terhubung ke server Google Apps Script. Cek koneksi internet.", "error");
-    };
-
-    document.body.appendChild(script);
-  });
-
-  function resetForm() {
-    dataPemilih = [];
-    nomorDptInput.value = "";
-    nomorDptInput.disabled = true;
-    namaInput.value = "";
-    jkInput.value = "";
-    ketInput.value = "";
-    urutInput.value = "Otomatis tercatat saat simpan";
-    btnSubmit.disabled = true;
-    statusDiv.style.display = "none";
-  }
-
-  function showStatus(msg, type) {
-    statusDiv.textContent = msg;
-    statusDiv.className = type;
-    statusDiv.style.display = "block";
-  }
-</script>
-
+    if (sessionStorage.getItem("tungsura_admin") === "true") activateAdmin();
+  </script>
 </body>
 </html>
