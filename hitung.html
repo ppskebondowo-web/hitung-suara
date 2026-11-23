@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Input Hasil Penghitungan Suara</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: radial-gradient(circle at top left, #1e3a8a, #020617 70%);
+      color: #f8fafc;
+      min-height: 100dvh;
+      padding: 14px 14px 96px 14px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(12px);
+    }
+    .topbar { display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 17px; font-weight: 800; color: #fff; }
+    .sub { font-size: 11px; color: #93c5fd; margin-top: 2px; font-weight: 600; }
+    .btn-logout {
+      background: #1e293b; color: #cbd5e1; border: 1px solid #334155;
+      padding: 7px 12px; border-radius: 11px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .sec-title {
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+      color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid #1e293b; padding-bottom: 6px;
+    }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 11px; color: #cbd5e1; font-weight: 600; }
+    .field input {
+      width: 100%; padding: 10px; border-radius: 11px; background: #0f172a;
+      border: 1px solid #334155; color: #fff; font-size: 15px; font-weight: 700; text-align: center; outline: none;
+    }
+    .field input:focus { border-color: #38bdf8; }
+    .field input[readonly] { background: rgba(30, 41, 59, 0.7); color: #93c5fd; border-color: #1e293b; }
+    .calon-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px;
+    }
+    .calon-label { font-size: 14px; font-weight: 800; color: #f8fafc; }
+    .calon-input {
+      width: 110px; padding: 9px; border-radius: 10px; background: #1e293b;
+      border: 1px solid #3b82f6; color: #fff; font-size: 16px; font-weight: 800; text-align: center; outline: none;
+    }
+    .val-box { padding: 12px; border-radius: 14px; font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
+    .val-err { background: rgba(127, 29, 29, 0.85); border: 1px solid #f43f5e; color: #fecdd3; }
+    .val-ok { background: rgba(6, 78, 59, 0.85); border: 1px solid #10b981; color: #a7f3d0; }
+    .val-title { font-weight: 800; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; }
+    .footer-fixed {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px; padding: 10px 14px 16px 14px;
+      background: linear-gradient(to top, #020617 80%, rgba(2, 6, 23, 0)); z-index: 30;
+    }
+    .btn-submit {
+      width: 100%; padding: 15px; border-radius: 14px; border: none;
+      background: linear-gradient(90deg, #10b981, #06b6d4); color: #022c22;
+      font-size: 14px; font-weight: 800; letter-spacing: 0.6px; cursor: pointer;
+    }
+    .btn-submit:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
+    .toast {
+      padding: 9px 12px; border-radius: 11px; font-size: 12px; font-weight: 700;
+      text-align: center; margin-bottom: 8px; display: none;
+    }
+    .toast.ok { display: block; background: #065f46; border: 1px solid #10b981; color: #a7f3d0; }
+    .toast.err { display: block; background: #7f1d1d; border: 1px solid #f43f5e; color: #fecdd3; }
+  </style>
+</head>
+<body>
+
+  <div class="glass topbar">
+    <div>
+      <h1 id="title-tps">INPUT SUARA TPS</h1>
+      <div class="sub">Pastikan seluruh hitungan seimbang (valid)</div>
+    </div>
+    <button onclick="logout()" class="btn-logout">Keluar</button>
+  </div>
+
+  <!-- 1. DATA DPT (OTOMATIS DARI SHEET RTPS) -->
+  <div class="glass">
+    <div class="sec-title">1. Data Pemilih Terdaftar (DPT)</div>
+    <div class="grid-3">
+      <div class="field"><label>DPT Laki-laki</label><input type="number" id="dpt-l" readonly value="0"></div>
+      <div class="field"><label>DPT Perempuan</label><input type="number" id="dpt-p" readonly value="0"></div>
+      <div class="field"><label>Jumlah DPT</label><input type="number" id="dpt-tot" readonly value="0"></div>
+    </div>
+  </div>
+
+  <!-- 2. PENGGUNA HAK PILIH -->
+  <div class="glass">
+    <div class="sec-title">2. Pengguna Hak Pilih (Hadir)</div>
+    <div class="grid-3">
+      <div class="field"><label>Hadir Laki-laki</label><input type="number" id="php-l" min="0" placeholder="0" oninput="hitungValidasi()"></div>
+      <div class="field"><label>Hadir Perempuan</label><input type="number" id="php-p" min="0" placeholder="0" oninput="hitungValidasi()"></div>
+      <div class="field"><label>Jml Hak Pilih</label><input type="number" id="php-tot" readonly value="0"></div>
+    </div>
+  </div>
+
+  <!-- 3. RINCIAN SURAT SUARA -->
+  <div class="glass">
+    <div class="sec-title">3. Rincian Surat Suara</div>
+    <div class="grid-2" style="margin-bottom: 8px;">
+      <div class="field"><label>SS Diterima</label><input type="number" id="ss-terima" min="0" placeholder="0" oninput="hitungValidasi()"></div>
+      <div class="field"><label>SS Digunakan (=Hadir)</label><input type="number" id="ss-pakai" readonly value="0"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>SS Rusak / Keliru</label><input type="number" id="ss-rusak" min="0" placeholder="0" oninput="hitungValidasi()"></div>
+      <div class="field"><label>SS Tidak Terpakai</label><input type="number" id="ss-sisa" min="0" placeholder="0" oninput="hitungValidasi()"></div>
+    </div>
+  </div>
+
+  <!-- 4. PEROLEHAN SUARA CALON -->
+  <div class="glass">
+    <div class="sec-title">4. Perolehan Suara Calon</div>
+    <div class="calon-row">
+      <span class="calon-label">Calon 1</span>
+      <input type="number" id="c1" class="calon-input" min="0" placeholder="0" oninput="hitungValidasi()">
+    </div>
+    <div class="calon-row">
+      <span class="calon-label">Calon 2</span>
+      <input type="number" id="c2" class="calon-input" min="0" placeholder="0" oninput="hitungValidasi()">
+    </div>
+    <div class="calon-row">
+      <span class="calon-label">Calon 3</span>
+      <input type="number" id="c3" class="calon-input" min="0" placeholder="0" oninput="hitungValidasi()">
+    </div>
+    <div class="grid-3" style="margin-top: 10px;">
+      <div class="field"><label>Suara Sah</label><input type="number" id="suara-sah" readonly value="0"></div>
+      <div class="field"><label>Tidak Sah</label><input type="number" id="suara-tidaksah" min="0" placeholder="0" oninput="hitungValidasi()"></div>
+      <div class="field"><label>Sah + Tdk Sah</label><input type="number" id="suara-tot" readonly value="0"></div>
+    </div>
+  </div>
+
+  <!-- INDIKATOR KESALAHAN / VALIDASI -->
+  <div id="val-indicator" class="val-box val-err">
+    <div class="val-title">⚠ Data Belum Valid (Tombol Kirim Terkunci)</div>
+    <div id="val-messages">Silakan isi angka pengguna hak pilih, surat suara, dan perolehan suara.</div>
+  </div>
+
+  <div class="footer-fixed">
+    <div id="toast-box" class="toast"></div>
+    <button onclick="kirimHasil()" id="btn-submit" disabled class="btn-submit">KIRIM HASIL PENGHITUNGAN</button>
+  </div>
+  <script>
+    const GAS_HOST = atob("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy8=");
+    const GAS_TUNGSURA_ID = "GANTI_DENGAN_ID_APPS_SCRIPT_TUNGSURA";
+    const APPS_SCRIPT_URL = GAS_HOST + GAS_TUNGSURA_ID + "/exec";
+    const TUNGSURA_SHEET_ID = "1cbk_RUXMYU8Y7gL819CiVAEWeUZmBelL-2vNYS6cx_s";
+
+    const currentTps = sessionStorage.getItem("tungsura_tps");
+    if (!currentTps) window.location.href = "index.html";
+    document.getElementById('title-tps').innerText = `HASIL SUARA • ${currentTps}`;
+
+    let isValidAll = false, isSubmitting = false;
+
+    async function loadDptTps() {
+      try {
+        const domain = atob("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2Qv");
+        const query = encodeURIComponent("SELECT * OFFSET 0");
+        const url = domain + TUNGSURA_SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=rtps&tq=" + query + "&t=" + Date.now();
+
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.split(/\r?\n/).filter(r => r.trim() !== "");
+
+        for (let i = 0; i < lines.length; i++) {
+          const cols = lines.at(i).split(',').map(c => c.replace(/^"|"$/g, '').trim());
+          const tpsColIdx = cols.findIndex(val => val.toUpperCase() === currentTps.toUpperCase());
+          if (tpsColIdx !== -1 && cols.length > tpsColIdx + 2) {
+            const l = parseInt(cols.at(tpsColIdx + 1), 10) || 0;
+            const p = parseInt(cols.at(tpsColIdx + 2), 10) || 0;
+            document.getElementById('dpt-l').value = l;
+            document.getElementById('dpt-p').value = p;
+            document.getElementById('dpt-tot').value = l + p;
+            break;
+          }
+        }
+      } catch (e) {
+        console.log("Gagal memuat DPT dari sheet rtps:", e);
+      }
+    }
+
+    function getVal(id) {
+      const v = parseInt(document.getElementById(id).value, 10);
+      return isNaN(v) || v < 0 ? 0 : v;
+    }
+
+    function hitungValidasi() {
+      const phpL = getVal('php-l');
+      const phpP = getVal('php-p');
+      const phpTot = phpL + phpP;
+      document.getElementById('php-tot').value = phpTot;
+
+      const ssPakai = phpTot;
+      document.getElementById('ss-pakai').value = ssPakai;
+
+      const ssTerima = getVal('ss-terima');
+      const ssRusak = getVal('ss-rusak');
+      const ssSisa = getVal('ss-sisa');
+
+      const c1 = getVal('c1');
+      const c2 = getVal('c2');
+      const c3 = getVal('c3');
+      const suaraSah = c1 + c2 + c3;
+      const suaraTidakSah = getVal('suara-tidaksah');
+      const suaraTot = suaraSah + suaraTidakSah;
+
+      document.getElementById('suara-sah').value = suaraSah;
+      document.getElementById('suara-tot').value = suaraTot;
+
+      const errors = [];
+
+      if (phpTot === 0) {
+        errors.push("• Jumlah Pengguna Hak Pilih belum diisi (tidak boleh 0).");
+      }
+
+      const hitungTerima = ssRusak + ssSisa + ssPakai;
+      if (ssTerima !== hitungTerima) {
+        const selisih1 = ssTerima - hitungTerima;
+        errors.push(`• Surat Suara Diterima (${ssTerima}) tidak sama dengan Rusak + Tidak Terpakai + Digunakan (${ssRusak} + ${ssSisa} + ${ssPakai} = ${hitungTerima}). Selisih: ${selisih1}.`);
+      }
+
+      if (suaraTot !== phpTot) {
+        const selisih2 = suaraTot - phpTot;
+        errors.push(`• Total Suara Sah + Tidak Sah (${suaraTot}) tidak sama dengan Jumlah Pengguna Hak Pilih (${phpTot}). Selisih: ${selisih2}.`);
+      }
+
+      const box = document.getElementById('val-indicator');
+      const msgEl = document.getElementById('val-messages');
+      const btn = document.getElementById('btn-submit');
+
+      if (errors.length > 0) {
+        isValidAll = false;
+        btn.disabled = true;
+        box.className = "val-box val-err";
+        box.querySelector('.val-title').innerText = "⚠ Data Belum Valid (Tombol Kirim Terkunci)";
+        msgEl.innerHTML = errors.join("<br>");
+      } else {
+        isValidAll = true;
+        btn.disabled = false;
+        box.className = "val-box val-ok";
+        box.querySelector('.val-title').innerText = "✓ Seluruh Data Seimbang & Valid";
+        msgEl.innerText = `Pengguna Hak Pilih (${phpTot}) sama dengan Surat Suara Digunakan dan Total Suara Sah + Tidak Sah (${suaraTot}). Siap dikirim.`;
+      }
+    }
+
+    async function kirimHasil() {
+      if (!isValidAll || isSubmitting) return;
+      if (!confirm(`Kirim hasil penghitungan suara untuk ${currentTps}? Jika pernah mengirim sebelumnya, data lama akan diarsipkan ke log.`)) return;
+
+      isSubmitting = true;
+      const btn = document.getElementById('btn-submit');
+      const toast = document.getElementById('toast-box');
+      btn.disabled = true;
+      btn.innerText = "MENGIRIM HASIL...";
+      toast.className = "toast";
+
+      try {
+        const params = new URLSearchParams({
+          action: "simpan",
+          tps: currentTps,
+          dptL: getVal('dpt-l'),
+          dptP: getVal('dpt-p'),
+          phpL: getVal('php-l'),
+          phpP: getVal('php-p'),
+          ssDiterima: getVal('ss-terima'),
+          ssRusak: getVal('ss-rusak'),
+          ssTidakTerpakai: getVal('ss-sisa'),
+          c1: getVal('c1'),
+          c2: getVal('c2'),
+          c3: getVal('c3'),
+          suaraTidakSah: getVal('suara-tidaksah'),
+          _t: Date.now()
+        });
+
+        const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          toast.className = "toast ok";
+          toast.innerText = "✓ " + data.message;
+        } else {
+          toast.className = "toast err";
+          toast.innerText = "⚠ " + data.message;
+        }
+      } catch (e) {
+        toast.className = "toast err";
+        toast.innerText = "Gagal mengirim data: " + e.message;
+      } finally {
+        isSubmitting = false;
+        btn.disabled = !isValidAll;
+        btn.innerText = "KIRIM HASIL PENGHITUNGAN";
+      }
+    }
+
+    function logout() {
+      sessionStorage.removeItem("tungsura_tps");
+      window.location.href = "index.html";
+    }
+
+    loadDptTps();
+  </script>
+</body>
+</html>
